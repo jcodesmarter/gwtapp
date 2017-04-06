@@ -247,7 +247,7 @@ public class ViewRegisteredUsers extends Composite {
 		Column<User, String> newCopyUserBtn = new Column<User, String>(new ButtonCell()) {
 			@Override
 			public String getValue(final User object) {
-				return "edit";
+				return "new copy";
 			}
 		};
 

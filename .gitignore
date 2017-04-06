@@ -1,5 +1,6 @@
 .classpath
 target/
+src/main/gwt-unitCache/
 src/main/webapp/gwtapp/*
 src/main/webapp/WEB-INF/classes/*
 src/main/webapp/WEB-INF/lib/*

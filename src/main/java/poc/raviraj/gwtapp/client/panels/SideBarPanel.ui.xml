@@ -20,7 +20,7 @@
 						<li><g:Anchor href="#">Link 5</g:Anchor></li>
 					</ul>
 				</nav>
-			</g:HTMLPanel>
+			</g:HTMLPanel>			
 			<g:HTMLPanel g:StackPanel-text="Menu Header 3">
 				<nav class="side-panel">				
 					<ul>
@@ -32,6 +32,7 @@
 					</ul>
 				</nav>
 			</g:HTMLPanel>
+			<!--  
 			<g:HTMLPanel g:StackPanel-text="Menu Header 4">
 				<nav class="side-panel">				
 					<ul>
@@ -54,6 +55,7 @@
 					</ul>
 				</nav>
 			</g:HTMLPanel>
+			-->
 		</g:StackPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
