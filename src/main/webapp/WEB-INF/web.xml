@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+	<!-- Servlets -->
+	<!-- <servlet> <servlet-name>greetServlet</servlet-name> <servlet-class>poc.raviraj.gwtapp.server.GreetingServiceImpl</servlet-class> </servlet> <servlet-mapping> <servlet-name>greetServlet</servlet-name> <url-pattern>/gwtapp/greet</url-pattern> </servlet-mapping> -->
+
+	<servlet>
+		<servlet-name>MasterTypeServiceImpl</servlet-name>
+		<servlet-class>
+			poc.raviraj.gwtapp.server.MasterTypeServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MasterTypeServiceImpl</servlet-name>
+		<!-- if you donot sepecify rename-to property in *.gwt.xml then url-pattern would be "/poc.raviraj.gwtapp.GwtApp/mastertypes" -->
+		<url-pattern>/gwtapp/mastertypes</url-pattern>		
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UserServiceImpl</servlet-name>
+		<servlet-class>
+			poc.raviraj.gwtapp.server.UserServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UserServiceImpl</servlet-name>
+		<!-- if you donot sepecify rename-to property in *.gwt.xml then url-pattern would be "/poc.raviraj.gwtapp.GwtApp/mastertypes" -->
+		<url-pattern>/gwtapp/users</url-pattern>		
+	</servlet-mapping>
+	
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>gwtapp.html</welcome-file>
+	</welcome-file-list>
+
+</web-app>

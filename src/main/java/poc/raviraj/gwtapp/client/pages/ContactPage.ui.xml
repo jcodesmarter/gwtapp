@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<g:DecoratedStackPanel width="100%">
+		<g:HTMLPanel g:StackPanel-text="Contact">
+			<div>
+				<h1>Project Developer</h1>
+				<ul>
+					<li>
+						Raviraj Shettigar<br />
+						Extension: 6384<br />
+						Location: MS 14 - 8th Floor - B10(B)
+					</li>
+				</ul>
+			</div>
+		</g:HTMLPanel>
+	</g:DecoratedStackPanel>
+</ui:UiBinder> 
