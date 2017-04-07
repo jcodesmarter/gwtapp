@@ -2,7 +2,13 @@ package poc.raviraj.gwtapp.client.pages;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import javax.validation.groups.Default;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -10,6 +16,8 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SimpleHtmlSanitizer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -17,14 +25,17 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.validation.client.impl.Validation;
 
 import poc.raviraj.gwtapp.client.MasterTypeService;
 import poc.raviraj.gwtapp.client.MasterTypeServiceAsync;
@@ -48,6 +59,8 @@ public class UserRegistrationPage extends Composite {
 
 	private static DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM/dd/yyyy");
 
+	@UiField
+	Label mode;
 	@UiField
 	Hidden userId;
 	@UiField
@@ -73,9 +86,12 @@ public class UserRegistrationPage extends Composite {
 	@UiField
 	FormPanel userRegistrationForm;
 	@UiField
-	HorizontalPanel radioButtonPanelForGender;
+	FlowPanel radioButtonPanelForGender;
 	@UiField
 	Hidden gender;
+	
+	@UiField
+	HTML validationMessageSection;
 
 	private List<Gender> genderList;
 	private List<RadioButton> genderRadioButtonList;
@@ -91,14 +107,14 @@ public class UserRegistrationPage extends Composite {
 	public UserRegistrationPage() {
 		this(0L);
 	}
-	
+
 	public UserRegistrationPage(final Long uid) {
 		this(uid, false);
 	}
 
 	public UserRegistrationPage(final Long uid, final boolean resetUserIdToZeroForCreatingNewUserCopy) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -198,8 +214,10 @@ public class UserRegistrationPage extends Composite {
 														@SuppressWarnings("deprecation")
 														@Override
 														public void onSuccess(User user) {
-															if(!resetUserIdToZeroForCreatingNewUserCopy)
-															{
+															if (resetUserIdToZeroForCreatingNewUserCopy) {
+																mode.setText("[New Copy User]");
+															} else {
+																mode.setText("[Updating Existing User]");
 																userId.setValue(String.valueOf(user.getUserId()));
 															}
 															version.setValue(String.valueOf(user.getVersion()));
@@ -207,14 +225,10 @@ public class UserRegistrationPage extends Composite {
 															lastName.setText(user.getLastName());
 
 															gender.setValue(String.valueOf(user.getGender().getKeyId()));
-															GWT.log("Gender to be set: " + gender.getValue());
 															for (Gender g : genderList) {
 																if (g.getKeyId() == user.getGender().getKeyId()) {
-																	GWT.log("Gender to be selected: " + g.getKeyId());
 																	for (RadioButton radioBtn : genderRadioButtonList) {
-																		GWT.log("Gender Matching: " + radioBtn.getText() + " = " + g.getKeyName());
 																		if (radioBtn.getText().equals(g.getKeyName())) {
-																			GWT.log("Gender selected: " + radioBtn.getText());
 																			radioBtn.setChecked(true);
 																		}
 																	}
@@ -225,10 +239,7 @@ public class UserRegistrationPage extends Composite {
 															userName.setText(user.getUserName());
 
 															for (Department d : departmentList) {
-																GWT.log("Comparing Departments: " + d.getKeyId() + " - " + user.getDepartment().getKeyId());
 																if (d.getKeyId() == user.getDepartment().getKeyId()) {
-																	GWT.log("Matched Departments: " + d.getKeyId() + " - " + user.getDepartment().getKeyId());
-																	GWT.log("Index for: " + departmentList.indexOf(d));
 																	department.setSelectedIndex(departmentList.indexOf(d) + 1);
 																}
 															}
@@ -269,7 +280,7 @@ public class UserRegistrationPage extends Composite {
 
 	@UiHandler("saveButton")
 	public void saveButton_ClickHandler(ClickEvent event) {
-
+		validationMessageSection.setHTML("");
 		saveButton.setText("Saving ...");
 		saveButton.setEnabled(false);
 
@@ -298,42 +309,65 @@ public class UserRegistrationPage extends Composite {
 		roleObj.setKeyId(Long.parseLong(role.getSelectedValue()));
 		user.setRole(roleObj);
 
-		userService.save(user, new AsyncCallback<User>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				saveButton.setEnabled(true);
-				saveButton.setText("Save");
-
-				final OkMessageDialog msgbox = new OkMessageDialog("Error", "Failed to register user");
-				msgbox.setOkButtonClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						msgbox.hide();
-					}
-				});
-
-				msgbox.show();
+		//validation of user object code
+		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+		// validate on the client
+		Set<ConstraintViolation<User>> violations = validator.validate(user, Default.class);
+		if (!violations.isEmpty()) {
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+			sb.appendHtmlConstant("<h3>Validation Message(s):</h3>");
+			sb.appendHtmlConstant("<ul>");
+			Iterator<ConstraintViolation<User>> itrViolations = violations.iterator();
+			while(itrViolations.hasNext()){
+				ConstraintViolation<User> userViolation = itrViolations.next();
+				if (userViolation.getPropertyPath() != null) {
+					sb.appendHtmlConstant("<li>");
+					sb.append(SimpleHtmlSanitizer.sanitizeHtml(userViolation.getMessage()));
+					sb.appendHtmlConstant("</li>");					
+		        }
 			}
+			sb.appendHtmlConstant("</ul>");
+			validationMessageSection.setHTML(sb.toSafeHtml());
+			saveButton.setEnabled(true);
+			saveButton.setText("Save");
+		} else {
+			userService.save(user, new AsyncCallback<User>() {
 
-			@Override
-			public void onSuccess(User result) {
-				saveButton.setEnabled(true);
-				saveButton.setText("Save");
-				userRegistrationForm.reset();
-				dateOfJoining.setValue(new Date(), true);
+				@Override
+				public void onFailure(Throwable caught) {
+					saveButton.setEnabled(true);
+					saveButton.setText("Save");
 
-				final OkMessageDialog msgbox = new OkMessageDialog("Success", "User has been registered successfully!");
-				msgbox.setOkButtonClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						msgbox.hide();
-					}
-				});
-				msgbox.show();
-			}
+					final OkMessageDialog msgbox = new OkMessageDialog("Error", "Failed to register user");
+					msgbox.setOkButtonClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							msgbox.hide();
+						}
+					});
 
-		});
+					msgbox.show();
+				}
+
+				@Override
+				public void onSuccess(User result) {
+					saveButton.setEnabled(true);
+					saveButton.setText("Save");
+					userRegistrationForm.reset();
+					dateOfJoining.setValue(new Date(), true);
+
+					final OkMessageDialog msgbox = new OkMessageDialog("Success", "User has been registered successfully!");
+					msgbox.setOkButtonClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							msgbox.hide();
+						}
+					});
+					msgbox.show();
+				}
+
+			});
+		}
 	}
 
 	@UiHandler("resetButton")
@@ -343,6 +377,7 @@ public class UserRegistrationPage extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				userRegistrationForm.reset();
+				validationMessageSection.setHTML("");
 				dateOfJoining.setValue(new Date(), true);
 				msgbox.hide();
 			}

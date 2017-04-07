@@ -12,10 +12,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Table(name = "poc_users")
@@ -29,10 +33,15 @@ public class User extends AuditableModel {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 
+	@NotEmpty(message = "First Name cannot be blank")
+	@Pattern(regexp = "[a-zA-Z]+", message = "First Name contains invalid characters")
 	private String firstName;
 
+	@NotEmpty(message = "Last Name cannot be blank")
+	@Pattern(regexp = "[a-zA-Z]+", message = "Last Name contains invalid characters")
 	private String lastName;
 
+	@Valid
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "genderId")
 	private Gender gender;
@@ -40,18 +49,24 @@ public class User extends AuditableModel {
 	@Temporal(TemporalType.DATE)
 	private Date dateOfJoining;
 
+	@NotEmpty(message = "Username cannot be blank")
+	@Pattern(regexp = "[a-zA-Z0-9]+", message = "Username contains invalid characters")
+	@Size(min = 6, max = 15, message = "Username length must be between 6 to 15 characters")
 	private String userName;
 
 	private String password = "Hello135";
 
+	@Valid
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "departmentId")
 	private Department department;
 
+	@Valid
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "designationId")
 	private Designation designation;
 
+	@Valid
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "roleId")
 	private Role role;

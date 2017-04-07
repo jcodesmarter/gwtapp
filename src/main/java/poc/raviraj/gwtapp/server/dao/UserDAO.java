@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 import poc.raviraj.gwtapp.shared.User;
 
@@ -82,6 +83,23 @@ public class UserDAO extends AbstractDAO {
 		Criteria criteria = session.createCriteria(User.class);
 		criteria.setFirstResult(pageNumber * perPageLimit - pageNumber);
 		criteria.setFetchSize(perPageLimit);
+		@SuppressWarnings("unchecked")
+		List<User> userList = criteria.list();
+
+		tx.commit();
+		session.close();
+
+		return userList;
+	}
+	
+	public List<User> findAllByFirstNameOrLastNameOrUsername(String searchText) {
+		Session session = getSession();
+		Transaction tx = session.getTransaction();
+		tx.begin();
+
+		Criteria criteria = session.createCriteria(User.class);
+		criteria.add(Restrictions.or(Restrictions.like("firstName", searchText), Restrictions.like("lastName", searchText), Restrictions.like("userName", searchText)));
+		
 		@SuppressWarnings("unchecked")
 		List<User> userList = criteria.list();
 

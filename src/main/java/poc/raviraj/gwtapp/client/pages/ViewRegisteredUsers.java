@@ -11,16 +11,20 @@ import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -42,14 +46,16 @@ public class ViewRegisteredUsers extends Composite {
 	}
 
 	@UiField
+	TextBox runTimeSearch;
+	@UiField
 	CellTable<User> userCellTable;
 	@UiField
 	SimplePager pager;
 
-	ListDataProvider<User> userDataProvider;
-
+	private ListDataProvider<User> userDataProvider;
 	private PleaseWaitDialog pleaseWait = new PleaseWaitDialog();
 	private UserServiceAsync userService = GWT.create(UserService.class);
+	private Timer timer = null;
 
 	public ViewRegisteredUsers() {
 		this(0);
@@ -323,6 +329,50 @@ public class ViewRegisteredUsers extends Composite {
 		});
 
 		userCellTable.addColumn(deleteUserBtn);
+	}
+		
+	private int counter = 0;
+	@UiHandler("runTimeSearch")
+	public void runtimeUserSearch_onKeyUpHandler(KeyUpEvent event){
+	
+		if(timer != null){
+			counter++;
+			timer.cancel();			
+		}
+		timer = new Timer(){
+			@Override
+			public void run() {
+				userService.findAllByFirstNameOrLastNameOrUsername(runTimeSearch.getText().trim(), new AsyncCallback<List<User>>() {
+					@Override
+					public void onSuccess(List<User> result) {
+						userCellTable.setRowData(0, result);
+						userCellTable.setRowCount(result.size());
+
+						userDataProvider.setList(result);
+						pager.setPage(0);
+						pleaseWait.hide();
+						
+						GWT.log("Finally ran after " + counter + " number of keyup events");
+						counter=0;
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						pleaseWait.hide();
+						final OkMessageDialog msgbox = new OkMessageDialog("Error", "There was an error while loading registered users list: " + caught.getMessage());
+						msgbox.setOkButtonClickHandler(new ClickHandler() {
+							@Override
+							public void onClick(ClickEvent event) {
+								msgbox.hide();
+							}
+						});
+						counter=0;
+					}
+				});				
+			}
+		};
+		timer.schedule(500);
+		
 	}
 
 }

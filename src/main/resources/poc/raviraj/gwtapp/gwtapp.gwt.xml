@@ -11,21 +11,24 @@
 	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
 
 	<!-- Other module inherits -->
-	
+	<!-- gwt validation related classes to be configured here.. -->
+	<inherits name="org.hibernate.validator.HibernateValidator" />
+	<replace-with class="poc.raviraj.gwtapp.client.ApplicationValidatorFactory">
+		<when-type-is class="javax.validation.ValidatorFactory" />
+	</replace-with>
+
 	<!-- Specify the app entry point class. -->
 	<entry-point class='poc.raviraj.gwtapp.client.GwtApp' />
 
 	<!-- Specify the paths for translatable code -->
 	<source path='client' />
 	<source path='shared' />
-	
+
 	<public path='static2' />
 	<!-- injecting stylesheet in the main html page -->
 	<stylesheet src='/gwtapp/gwtapp.css' />
-	
+
 	<!-- configuring servlet mapping -->
-	<!-- 
-	<servlet path="/mastertypes" class="poc.raviraj.gwtapp.server.MasterTypeServiceImpl" />
-	-->
+	<!-- <servlet path="/mastertypes" class="poc.raviraj.gwtapp.server.MasterTypeServiceImpl" /> -->
 
 </module>

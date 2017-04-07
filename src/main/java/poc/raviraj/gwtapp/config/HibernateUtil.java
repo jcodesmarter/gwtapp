@@ -14,23 +14,17 @@ import poc.raviraj.gwtapp.shared.Role;
 import poc.raviraj.gwtapp.shared.User;
 
 public class HibernateUtil {
-	
-	private static SessionFactory sessionFactory = new Configuration()			
-			.addAnnotatedClass(AuditableModel.class)
-			.addAnnotatedClass(MasterType.class)
-			.addAnnotatedClass(DummyTable.class)
-			.addAnnotatedClass(Department.class)
-			.addAnnotatedClass(Designation.class)
-			.addAnnotatedClass(Role.class)
-			.addAnnotatedClass(Gender.class)
-			.addAnnotatedClass(User.class)
-			.setInterceptor(new AuditInterceptor())
-			.configure()
-			.buildSessionFactory();
-	
-	public static Session getSession(){
+
+	private static SessionFactory sessionFactory = new Configuration().addAnnotatedClass(AuditableModel.class).addAnnotatedClass(MasterType.class).addAnnotatedClass(DummyTable.class).addAnnotatedClass(Department.class).addAnnotatedClass(Designation.class).addAnnotatedClass(Role.class).addAnnotatedClass(Gender.class).addAnnotatedClass(User.class).setInterceptor(new AuditInterceptor()).configure().buildSessionFactory();
+
+	static {
+		//added this static block just to load the hibernate during class loading itself.
+		HibernateUtil.getSession().close();
+	}
+
+	public static Session getSession() {
 		return sessionFactory
-				//.withOptions().interceptor(new AuditInterceptor())
+				// .withOptions().interceptor(new AuditInterceptor())
 				.openSession();
 	}
 

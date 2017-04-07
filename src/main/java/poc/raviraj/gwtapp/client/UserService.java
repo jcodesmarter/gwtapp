@@ -19,4 +19,7 @@ public interface UserService extends RemoteService {
 	public User find(Long userId);
 	
 	public List<User> paginated(int pageNumber, int perPageLimit);
+	
+	public List<User> findAllByFirstNameOrLastNameOrUsername(String searchText);
+	
 }

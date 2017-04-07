@@ -51,11 +51,12 @@ public class TestHibernateConfiguration {
 		session.close();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void getAllDepartmentsFromMasterTypes(){
 		Session session = HibernateUtil.getSession();
 		Criteria criteria = session.createCriteria(Department.class);
-		List<Department> list = (List<Department>) criteria.list();
+		List<Department> list = criteria.list();
 		System.out.println(list.toString());
 	}
 }

@@ -1,6 +1,5 @@
 package poc.raviraj.gwtapp.shared;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
@@ -26,7 +25,6 @@ public class MasterType extends SoftDeleteableModel {
 	@Id
 	private Long keyId;
 
-	@Column(unique = true)
 	private String keyName;
 	
 	public MasterType(){

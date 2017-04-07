@@ -38,5 +38,14 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	public List<User> paginated(int pageNumber, int perPageLimit) {
 		return userDao.paginated(pageNumber, perPageLimit);
 	}
+	
+	@Override
+	public List<User> findAllByFirstNameOrLastNameOrUsername(String searchText){
+		if(searchText.length() == 0){
+			return userDao.findAll();
+		}
+		searchText = searchText + "%";
+		return userDao.findAllByFirstNameOrLastNameOrUsername(searchText);
+	}
 
 }

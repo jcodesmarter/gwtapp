@@ -7,9 +7,18 @@
 		margin-bottom: 4px;
 	}
 	</ui:style>
-	<g:DecoratedStackPanel width="100%">
-		<g:HTMLPanel g:StackPanel-text="View Registered Users">
-			<table cellspacing="0" cellpadding="0" style="width:100%;">
+	<g:SimplePanel width="100%">
+		<g:HTMLPanel>
+			<h2>View Registered Users</h2>			
+			<table class="horizontal-section">
+				<tr>
+					<td>
+						<label>Search: </label>
+						<g:TextBox ui:field="runTimeSearch"></g:TextBox>
+					</td>
+				</tr>
+			</table>
+			<table style="width:100%;">
 				<tr>
 					<td valign="top" align="center">
 						<c:CellTable addStyleNames="{style.cellTable}" pageSize="10" width="100%" ui:field="userCellTable" />
@@ -22,5 +31,5 @@
 				</tr>
 			</table>
 		</g:HTMLPanel>
-	</g:DecoratedStackPanel>
+	</g:SimplePanel>
 </ui:UiBinder> 

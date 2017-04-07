@@ -96,3 +96,17 @@
 	text-decoration: none;
 	cursor: pointer;
 }
+
+.content-panel h2:first-of-type {
+	color: #042037;
+	border-bottom: 1px solid #042037;
+	margin-bottom: 10px;
+}
+
+.content-panel .horizontal-section{
+	margin-bottom: 10px;
+}
+
+.validation-errors{
+	color: red;
+}
