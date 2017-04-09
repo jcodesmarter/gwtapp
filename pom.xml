@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>poc.raviraj</groupId>
@@ -70,19 +71,10 @@
 			<version>4.1.0.Final</version>
 			<classifier>sources</classifier>
 		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<classifier>sources</classifier>
-			<scope>test</scope>
-		</dependency>
-		-->
+		<!-- <dependency> <groupId>javax.validation</groupId> <artifactId>validation-api</artifactId> 
+			<scope>test</scope> </dependency> <dependency> <groupId>javax.validation</groupId> 
+			<artifactId>validation-api</artifactId> <classifier>sources</classifier> 
+			<scope>test</scope> </dependency> -->
 
 		<!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
 		<dependency>
@@ -90,6 +82,13 @@
 			<artifactId>mssql-jdbc</artifactId>
 			<version>6.1.2.jre7-preview</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>3.1.14</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -118,7 +117,8 @@
 	</dependencies>
 
 	<build>
-		<!-- Output classes directly into the webapp, so that IDEs and "mvn process-classes" update them in DevMode -->
+		<!-- Output classes directly into the webapp, so that IDEs and "mvn process-classes" 
+			update them in DevMode -->
 		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
 
 		<plugins>
@@ -137,7 +137,8 @@
 						</goals>
 					</execution>
 				</executions>
-				<!-- Plugin configuration. There are many available options, see gwt-maven-plugin documentation at codehaus.org -->
+				<!-- Plugin configuration. There are many available options, see gwt-maven-plugin 
+					documentation at codehaus.org -->
 				<configuration>
 					<runTarget>gwtapp.html</runTarget>
 					<modules>
