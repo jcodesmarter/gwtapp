@@ -6,14 +6,16 @@
 <hibernate-configuration>
 	<session-factory>
 		<!-- Database connection settings -->
-		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:4928/gwtpoc</property>
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">root</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
+		<property name="connection.url">jdbc:sqlserver://10.30.8.180:1433;DatabaseName=gwtpoc</property>		
+		<property name="connection.username">sa</property>
+		<property name="connection.password">password_123</property>
 
 		<!-- JDBC connection pool (use the built-in) -->
-		<property name="connection.pool_size">5</property>
+		<property name="connection.pool_size">10</property>
+
+		<!-- SQL dialect -->
+		<property name="dialect">org.hibernate.dialect.SQLServer2012Dialect</property>
 
 		<!-- Enable Hibernate's automatic session context management -->
 		<property name="current_session_context_class">thread</property>

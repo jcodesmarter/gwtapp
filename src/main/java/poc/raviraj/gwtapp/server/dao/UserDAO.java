@@ -22,7 +22,7 @@ public class UserDAO extends AbstractDAO {
 			session.update(user);
 		}
 
-		tx.commit();		
+		tx.commit();
 		session.close();
 
 		return user;
@@ -91,7 +91,7 @@ public class UserDAO extends AbstractDAO {
 
 		return userList;
 	}
-	
+
 	public List<User> findAllByFirstNameOrLastNameOrUsername(String searchText) {
 		Session session = getSession();
 		Transaction tx = session.getTransaction();
@@ -99,7 +99,7 @@ public class UserDAO extends AbstractDAO {
 
 		Criteria criteria = session.createCriteria(User.class);
 		criteria.add(Restrictions.or(Restrictions.like("firstName", searchText), Restrictions.like("lastName", searchText), Restrictions.like("userName", searchText)));
-		
+
 		@SuppressWarnings("unchecked")
 		List<User> userList = criteria.list();
 
